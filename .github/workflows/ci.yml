@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Build and PostgreSQL integration
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: template
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: saas_template_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U template -d saas_template_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      # Disposable service credentials; no repository or production secrets needed.
+      DATABASE_URL: postgresql://template:ci-only-password@127.0.0.1:5432/saas_template_test?schema=identity
+      TEST_DATABASE_URL: postgresql://template:ci-only-password@127.0.0.1:5432/saas_template_test
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Generate Prisma client
+        run: npm run db:generate
+      - name: Build backend
+        run: npm run build
+      - name: Type-check extension examples
+        run: npm run typecheck:examples
+      - name: Apply migrations
+        run: npm run db:migrate
+      - name: Run integration tests
+        run: npm test
+      - name: Run compiled API scenario
+        run: npx --no-install tsx scripts/scenario.ts

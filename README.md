@@ -1,5 +1,7 @@
 # SaaS Admin Backend Template
 
+[![CI](https://github.com/Deamenophobia/saas-admin-template/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Deamenophobia/saas-admin-template/actions/workflows/ci.yml)
+
 An extensible Express + Prisma + PostgreSQL backend for SaaS identity and administration,
 extracted and adapted from the Kokoro repositories. MIT licensed.
 
@@ -21,7 +23,7 @@ backend starting point; review the documented deployment boundaries for your pro
 - Tenant suspension/resumption, versioned durable events and a callable outbox dispatcher.
 - Two optional product examples: team projects and a metered API service.
 
-This backend extraction is locally validated by eight integration scenarios.
+This backend extraction is validated by eight integration scenarios.
 It has not been deployed or independently security-audited. Frontend pages, billing,
 SAML/SCIM, organization-managed SSO and concrete VPN providers remain outside this scope.
 
@@ -103,6 +105,11 @@ rotation is currently revoke + issue with explicit separate operations; atomic
 external rotation is provider-specific and is not advertised by this API.
 
 ## Focused validation
+
+GitHub Actions runs the build, example type checks, migrations, eight integration
+tests and compiled API scenario on Node.js 22 with PostgreSQL 16. It runs for pushes
+and pull requests to `main`, and can also be started manually. The database is
+disposable; email, credential provisioning and OIDC use local fixtures.
 
 ```sh
 npm run build

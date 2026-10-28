@@ -21,3 +21,8 @@ Update OpenAPI/docs when changing a public contract. Add forward-only database
 migrations and a focused regression scenario when behavior warrants one. Do not
 commit local configuration, credentials, logs, dependencies or generated archives.
 New contributions are licensed under this repository's MIT license.
+
+The GitHub Actions CI workflow runs the build, example type checks, migrations,
+integration tests and compiled API scenario on Node.js 22 and PostgreSQL 16 for
+pull requests and pushes to `main`. The same workflow can be run manually from
+Actions. It uses a disposable database and requires no repository secrets.
