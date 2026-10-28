@@ -1,0 +1,48 @@
+{
+  "name": "saas-admin-template",
+  "version": "0.3.1",
+  "description": "Extensible SaaS identity and administration backend with organizations, scoped API keys and OIDC sign-in.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "typecheck:examples": "tsc -p tsconfig.examples.json",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "docs:generate": "node scripts/openapi.mjs",
+    "scenario": "npm run build && tsx scripts/scenario.ts",
+    "package:template": "powershell -NoProfile -File scripts/package.ps1",
+    "test": "tsx --test --test-concurrency=1 tests/critical.test.ts tests/extensions.test.ts tests/sso.test.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "5.22.0",
+    "argon2": "^0.41.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^8.1.0",
+    "nodemailer": "10.2.1",
+    "openid-client": "6.8.8",
+    "otpauth": "^9.3.6",
+    "resend": "6.35.0",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.0",
+    "@types/nodemailer": "8.0.2",
+    "jose": "6.2.12",
+    "prisma": "5.22.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
